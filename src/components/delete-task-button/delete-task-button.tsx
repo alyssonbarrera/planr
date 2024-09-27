@@ -12,23 +12,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
-import { redirect } from "next/navigation";
+import { deleteTaskAction } from "@/app/(app)/tasks/[id]/actions";
 
 type DeleteTaskButtonProps = {
   taskId: string;
 };
 
 export function DeleteTaskButton({ taskId }: DeleteTaskButtonProps) {
-  async function deleteTaskAction() {
-    "use server";
-
-    const supabase = createSupabaseServerClient();
-    await supabase.from("tasks").delete().eq("id", taskId);
-
-    redirect("/");
-  }
-
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -47,8 +37,10 @@ export function DeleteTaskButton({ taskId }: DeleteTaskButtonProps) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
-          <form action={deleteTaskAction}>
-            <AlertDialogAction type="submit">Delete task</AlertDialogAction>
+          <form action={deleteTaskAction.bind(null, taskId)}>
+            <AlertDialogAction type="submit" className="w-full">
+              Delete task
+            </AlertDialogAction>
           </form>
         </AlertDialogFooter>
       </AlertDialogContent>

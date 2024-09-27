@@ -23,8 +23,8 @@ export async function forgotPasswordAction(data: FormData) {
   const supabase = createSupabaseServerClient();
 
   async function action() {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "http://localhost:3000/auth/update-password",
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${process.env.NEXT_PUBLIC_PRODUCTION_URL}/auth/update-password`,
     });
 
     if (error) {

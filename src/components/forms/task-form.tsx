@@ -26,8 +26,7 @@ import {
   createTaskAction,
   updateTaskAction,
 } from "@/app/(app)/create-task/actions";
-import { requestFormReset } from "react-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -36,23 +35,36 @@ dayjs.extend(relativeTime);
 
 type TaskFormProps = {
   isUpdating?: boolean;
-  initialData?: TaskSchema;
+  initialData?: TaskSchema & { id: string };
 };
 
 export function TaskForm({ isUpdating = false, initialData }: TaskFormProps) {
   const [popoverIsOpen, setPopoverIsOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    initialData?.due_date ? new Date(initialData.due_date) : undefined
-  );
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
-  const formAction = isUpdating ? updateTaskAction : createTaskAction;
+  async function formAction(form: FormData) {
+    if (isUpdating) {
+      return await updateTaskAction(form, initialData?.id!);
+    }
 
-  const [{ success, message, errors }, formStatehandleSubmit, isPending] =
-    useFormState(formAction, (form) => requestFormReset(form));
+    return await createTaskAction(form);
+  }
+
+  const [{ success, message, errors }, formStateHandleSubmit, isPending] =
+    useFormState(formAction, (form) => {
+      form.reset();
+      setSelectedDate(undefined);
+    });
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    formStatehandleSubmit(event);
+    formStateHandleSubmit(event);
   }
+
+  useEffect(() => {
+    setSelectedDate(
+      initialData?.due_date ? new Date(initialData.due_date) : undefined
+    );
+  }, [initialData]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

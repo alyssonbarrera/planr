@@ -15,6 +15,7 @@ import {
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 
 import { ToogleTaskCompleteButton } from "@/components/toogle-task-complete-button";
+import { cookies } from "next/headers";
 
 dayjs.extend(relativeTime);
 
@@ -43,6 +44,14 @@ export default async function Task({ params }: TaskProps) {
   }
 
   const task = data[0];
+
+  if (!task) {
+    return (
+      <p className="text-sm text-muted-foreground text-center">
+        Task not found.
+      </p>
+    );
+  }
 
   return (
     <div className="space-y-4">

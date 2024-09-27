@@ -11,12 +11,11 @@ import { Label } from "@/components/ui/label";
 import { useFormState } from "@/hooks/use-form-state";
 
 import { FieldErrorMessage } from "../field-error-message";
-import { requestFormReset } from "react-dom";
 
 export function ForgotPasswordForm() {
   const [{ success, message, errors }, handleSubmit, isPending] = useFormState(
     forgotPasswordAction,
-    (form) => requestFormReset(form)
+    (form) => form.reset()
   );
 
   return (

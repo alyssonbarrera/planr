@@ -5,7 +5,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { AppError } from "@/utils/app-error";
 
 import { executeServerActionWithHandling } from "@/utils/execute-server-action-with-handling";
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 export async function createTaskAction(data: FormData) {
@@ -43,7 +42,7 @@ export async function createTaskAction(data: FormData) {
   });
 }
 
-export async function updateTaskAction(data: FormData) {
+export async function updateTaskAction(data: FormData, id: string) {
   const result = taskSchema.safeParse(Object.fromEntries(data));
 
   if (!result.success) {
@@ -60,19 +59,24 @@ export async function updateTaskAction(data: FormData) {
 
   const supabase = createSupabaseServerClient();
 
-  const taskId = cookies().get("taskId")?.value;
-
   async function executeUpdateTask() {
     const { error } = await supabase
       .from("tasks")
-      .update({ title, description, category_id, due_date, priority })
-      .eq("id", taskId);
+      .update({
+        title,
+        description,
+        category_id,
+        due_date,
+        priority,
+        updated_at: new Date(),
+      })
+      .eq("id", id);
 
     if (error) {
       throw new AppError(error.message);
     }
 
-    revalidatePath(`/tasks/${taskId}`);
+    revalidatePath(`/tasks/${id}`);
   }
 
   return await executeServerActionWithHandling({
@@ -91,6 +95,7 @@ export async function toogleTaskCompleteAction(
     .from("tasks")
     .update({
       completed_at: type === "complete" ? new Date() : null,
+      updated_at: new Date(),
     })
     .eq("id", id);
 
