@@ -24,6 +24,8 @@ type TaskProps = {
   };
 };
 
+export const runtime = "edge";
+
 export default async function Task({ params }: TaskProps) {
   const { id } = params;
 

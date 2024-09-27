@@ -1,5 +1,7 @@
 import { TaskForm } from "@/components/forms/task-form";
 
+export const runtime = "edge";
+
 export default function CreateTask() {
   return (
     <div className="space-y-4 pt-6">

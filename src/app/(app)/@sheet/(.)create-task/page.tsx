@@ -2,6 +2,8 @@ import { TaskForm } from "@/components/forms/task-form";
 import { InterceptedSheetContent } from "@/components/intercepted-sheet-content";
 import { Sheet, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
+export const runtime = "edge";
+
 export default function CreateTask() {
   return (
     <Sheet defaultOpen>

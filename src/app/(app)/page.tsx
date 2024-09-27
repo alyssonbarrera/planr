@@ -19,6 +19,8 @@ import { ToogleTaskCompleteButton } from "@/components/toogle-task-complete-butt
 
 dayjs.extend(relativeTime);
 
+export const runtime = "edge";
+
 export default async function Home() {
   const supabase = createSupabaseServerClient();
 
